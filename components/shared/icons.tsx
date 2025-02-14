@@ -1,0 +1,36 @@
+import { IoChatbubblesOutline } from "react-icons/io5";
+import { IoSettingsOutline } from "react-icons/io5";
+import { IoLogoWhatsapp } from "react-icons/io5";
+import { IoPersonCircle } from "react-icons/io5";
+import { IoAddOutline } from "react-icons/io5";
+import { IoFolder } from "react-icons/io5";
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import { IoEllipsisVerticalSharp } from "react-icons/io5";
+import { IoMicOutline } from "react-icons/io5";
+import { IoSend } from "react-icons/io5";
+import { IoPlay } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
+import { IoPauseOutline } from "react-icons/io5";
+import { IoArrowDownOutline } from "react-icons/io5";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoDownloadOutline } from "react-icons/io5";
+
+import { PiNotePencil } from "react-icons/pi";
+
+export const ChatBubblesIcon = IoChatbubblesOutline;
+export const SettingsIcon = IoSettingsOutline;
+export const NotePencilIcon = PiNotePencil;
+export const WhatsappIcon = IoLogoWhatsapp;
+export const PersonCircleIcon = IoPersonCircle;
+export const AddIcon = IoAddOutline;
+export const FolderIcon = IoFolder;
+export const EllipsisHorizontalIcon = IoEllipsisHorizontal;
+export const EllipsisVerticalIcon = IoEllipsisVerticalSharp;
+export const MicIcon = IoMicOutline;
+export const SendIcon = IoSend;
+export const PlayIcon = IoPlay;
+export const CloseIcon = IoClose;
+export const PauseIcon = IoPauseOutline;
+export const ArrowDownIcon = IoArrowDownOutline;
+export const ArrowDownShortIcon = IoIosArrowDown;
+export const DownloadIcon = IoDownloadOutline;
