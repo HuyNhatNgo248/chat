@@ -50,7 +50,7 @@ class ChatChannelManager {
     setChats: ChatState["setChats"],
     setChatMessages: ChatState["setChatMessages"],
     setChannels: ChatState["setChannels"],
-    setRevalidateImageCarousel: (revalidate: boolean) => void
+    setRevalidateImageCarousel: (revalidate: boolean) => void,
   ) {
     this.chat = chat;
     this.token = Cookies.get("token") as string;
@@ -114,7 +114,7 @@ class ChatChannelManager {
             }
           }
         },
-      }
+      },
     );
   }
 
@@ -125,7 +125,7 @@ class ChatChannelManager {
 
   private async handleCreate(
     receivedMessage: ReceivedMessageType,
-    selectedChat: ChatType | null
+    selectedChat: ChatType | null,
   ) {
     if (!selectedChat || receivedMessage.chat_id !== selectedChat.id) {
       return this.updateSelectedChatReadStatus(false, receivedMessage.chat_id);
@@ -144,12 +144,12 @@ class ChatChannelManager {
   private async handleUnsend(unsentMessage: ReceivedMessageType) {
     this.setChatMessages((prev) => {
       const updatedMessages = prev.filter(
-        (chat) => chat.id !== unsentMessage.id
+        (chat) => chat.id !== unsentMessage.id,
       );
 
       this.setChats((prev) => {
         const chatIndex = prev.findIndex(
-          (chat) => chat.id === unsentMessage.chat_id
+          (chat) => chat.id === unsentMessage.chat_id,
         );
 
         const newChats = [...prev];
@@ -171,7 +171,7 @@ class ChatChannelManager {
   private handleUpdate(updatedMessage: ReceivedMessageType) {
     this.setChatMessages((prev) => {
       const messageIndex = prev.findIndex(
-        (message) => message.id === updatedMessage.id
+        (message) => message.id === updatedMessage.id,
       );
       const newMessages = [...prev];
       newMessages[messageIndex] = updatedMessage;
@@ -182,7 +182,7 @@ class ChatChannelManager {
 
   private updateSelectedChatReadStatus(
     read: boolean,
-    chatId: number | undefined
+    chatId: number | undefined,
   ) {
     this.setChats((prev) => {
       const chatIndex = prev.findIndex((chat) => chat.id === chatId);
@@ -208,7 +208,7 @@ class ChatChannelManager {
 
 export const useChatChannel = (
   chat: ChatType,
-  currentUserId: number | null
+  currentUserId: number | null,
 ) => {
   const token = Cookies.get("token");
   const selectedChat = useChatStore((state) => state.selectedChat);
@@ -216,7 +216,7 @@ export const useChatChannel = (
   const setChatMessages = useChatStore((state) => state.setChatMessages);
   const setChannels = useChatStore((state) => state.setChannels);
   const setRevalidateImageCarousel = useImageCarouselStore(
-    (state) => state.setRevalidate
+    (state) => state.setRevalidate,
   );
 
   useEffect(() => {
@@ -228,7 +228,7 @@ export const useChatChannel = (
       setChats,
       setChatMessages,
       setChannels,
-      setRevalidateImageCarousel
+      setRevalidateImageCarousel,
     );
 
     return manager.handleIncomingMessage(selectedChat);

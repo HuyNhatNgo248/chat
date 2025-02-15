@@ -13,7 +13,6 @@ import { useUserContext } from "@/components/auth/protected-route";
 import LoadingScreen from "./loading-screen";
 import ProgressUpdate from "./progress-update";
 import ScrollDownButton from "./scroll-control/scroll-down-button";
-import NewMessageViewButton from "./scroll-control/new-message-view-button";
 import { useChatStore } from "@/hooks/use-chat-store";
 import Spinner from "@/components/shared/spinner";
 import { parseISO, format, isToday, isThisWeek, isSameDay } from "date-fns";
@@ -42,8 +41,6 @@ const MessageWindow: React.FC<MessageWindowProps> = () => {
 
   const [displayRead, setDisplayRead] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [prevMessageCount, setPrevMessageCount] = useState(0);
-  const [newMessageViewDisplay, setNewMessageViewDisplay] = useState(false);
   const { currentUserId } = useUserContext();
 
   const [oldestMessageId, setOldestMessageId] = useState<number | null>(null);
@@ -52,13 +49,8 @@ const MessageWindow: React.FC<MessageWindowProps> = () => {
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    onScroll,
-    scrollProgress,
-    setScrollDirection,
-    scrollDirection,
-    hasScrollbar,
-  } = useScroll(messageContainerRef);
+  const { onScroll, scrollProgress, setScrollDirection, scrollDirection } =
+    useScroll(messageContainerRef);
 
   useEffect(() => {
     const handleFetchMessages = async () => {
@@ -115,48 +107,22 @@ const MessageWindow: React.FC<MessageWindowProps> = () => {
   ]);
 
   useEffect(() => {
-    if (!chatMessages.length || isChatOpen) return;
+    if (!messageContainerRef.current || !chatMessages.length) return;
 
-    if (messageContainerRef.current) {
+    if (!isChatOpen) {
       messageContainerRef.current.scrollTo({
         top: messageContainerRef.current.scrollHeight,
         behavior: "auto",
       });
 
       setIsChatOpen(true);
-    }
-  }, [chatMessages, isChatOpen]);
-
-  useEffect(() => {
-    if (!isChatOpen || scrollProgress < 0.9) return;
-
-    if (messageContainerRef.current) {
+    } else {
       messageContainerRef.current.scrollTo({
         top: messageContainerRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
-  }, [chatMessages, isChatOpen, scrollProgress]);
-
-  useEffect(() => {
-    if (
-      prevMessageCount > 0 &&
-      chatMessages.length > prevMessageCount &&
-      chatMessages.at(-1)?.user_id !== currentUserId &&
-      scrollProgress < 0.9 &&
-      hasScrollbar
-    ) {
-      setNewMessageViewDisplay(true);
-    }
-
-    setPrevMessageCount(chatMessages.length);
-  }, [
-    chatMessages,
-    prevMessageCount,
-    currentUserId,
-    scrollProgress,
-    hasScrollbar,
-  ]);
+  }, [isChatOpen, chatMessages]);
 
   useEffect(() => {
     if (selectedChat) {
@@ -184,22 +150,20 @@ const MessageWindow: React.FC<MessageWindowProps> = () => {
   }, [chats, selectedChat, currentUserId]);
 
   useEffect(() => {
-    if (!displayRead || !messageContainerRef.current || scrollProgress < 0.9)
-      return;
+    if (!displayRead || !messageContainerRef.current) return;
 
     messageContainerRef.current.scrollTo({
       top: messageContainerRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [displayRead, scrollProgress]);
+  }, [displayRead]);
 
   useEffect(() => {
     if (scrollProgress === 0 && !endReached) {
       setOldestMessageId(chatMessages[0]?.id);
     }
 
-    if (scrollProgress > 0.9) {
-      setNewMessageViewDisplay(false);
+    if (scrollProgress === 1) {
     } else if (scrollProgress > 0.7) {
       setScrollDirection(null);
     }
@@ -268,18 +232,11 @@ const MessageWindow: React.FC<MessageWindowProps> = () => {
         </div>
       </div>
 
-      {scrollProgress < 0.7 && scrollDirection === "up" && (
+      {scrollProgress < 0.85 && scrollDirection === "up" && (
         <ScrollDownButton ref={messageContainerRef} />
       )}
 
       <div className="flex flex-col gap-4 absolute top-[10%] transform left-1/2 -translate-x-1/2 z-10">
-        {newMessageViewDisplay && (
-          <NewMessageViewButton
-            ref={messageContainerRef}
-            setNewMessageViewDisplay={setNewMessageViewDisplay}
-          />
-        )}
-
         <ProgressUpdate />
       </div>
     </>

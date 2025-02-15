@@ -42,7 +42,7 @@ interface UserContextProps {
   userStatuses: UserStatusType;
 }
 
-const USER_ACTION = {
+export const USER_ACTION = {
   CREATE: "create",
   DELETE: "delete",
 };
@@ -81,19 +81,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [router, token, userId]);
 
   useEffect(() => {
-    if (!token) {
-      if (userChannel) {
-        userChannel.unsubscribe();
-        setUserChannel(null);
-      }
-
-      if (userAppearanceChannel) {
-        userAppearanceChannel.unsubscribe();
-        setUserAppearanceChannel(null);
-      }
-
-      return;
-    }
+    if (!token) return;
 
     const cable = createCable(token);
 
@@ -105,6 +93,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         received: (data: { data: NotificationType }) => {
           switch (data.data.action_type) {
             case USER_ACTION.CREATE:
+
             case USER_ACTION.DELETE: {
               setNotification(data.data);
               break;
@@ -140,7 +129,23 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       userChannel1.unsubscribe();
       userAppearanceChannel1.unsubscribe();
     };
-  }, [token, userAppearanceChannel, userChannel]);
+  }, [token]);
+
+  useEffect(() => {
+    if (token) return;
+
+    if (userChannel) {
+      userChannel.unsubscribe();
+      setUserChannel(null);
+    }
+
+    if (userAppearanceChannel) {
+      userAppearanceChannel.unsubscribe();
+      setUserAppearanceChannel(null);
+    }
+
+    return;
+  }, [userChannel, userAppearanceChannel, token]);
 
   return (
     <UserContext.Provider
